@@ -1,26 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
 import './App.css';
+import { observer, inject } from 'mobx-react';
+import Market from './component/Market';
+import Item from './component/Item';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+@inject('store')
+@observer
+class App extends Component {
+
+	 async componentDidMount() {
+		await this.props.store.getAllItemsFromDB()
+		console.log(this.props.store.items)
+	}
+	render() {
+		return (
+			<div className="App">
+				<h2> Desert Market </h2>
+				<Market />
+				<div className="items">
+					{this.props.store.items.map((item, index) => {
+						return <Item key={`inventory-${index}`} 
+									 name={item.name}
+									 price={item.price}
+									 quantity={item.quantity} 
+								/>;
+					})}
+				</div>
+			</div>
+		);
+	}
 }
 
 export default App;
